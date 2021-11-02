@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.ListFragment
 import androidx.fragment.app.add
+import dog.snow.androidrecruittest.ui.DetailsFragment
 
 class MainActivity : AppCompatActivity(R.layout.main_activity){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity){
 
         val fragmentManager: FragmentManager = supportFragmentManager
         val listFragment = ListFragment()
+        val detailsFragment = DetailsFragment()
 
         fragmentManager.beginTransaction().add(R.id.container, listFragment)
     }

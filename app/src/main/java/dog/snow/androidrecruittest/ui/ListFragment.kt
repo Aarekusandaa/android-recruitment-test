@@ -26,7 +26,7 @@ class ListFragment : Fragment(R.layout.list_fragment) {
         return inflater.inflate(R.layout.list_fragment, container,false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_items.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -34,5 +34,5 @@ class ListFragment : Fragment(R.layout.list_fragment) {
                 TODO()
             })
         }
-    }
+    }*/
 }
