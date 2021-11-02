@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.ui.model.ListItem
 
@@ -32,7 +33,15 @@ class ListAdapter(private val onClick: (item: ListItem, position: Int, view: Vie
             val tvAlbumTitle: TextView = findViewById(R.id.tv_album_title)
             tvTitle.text = item.title
             tvAlbumTitle.text = item.albumTitle
-            //TODO: display item.thumbnailUrl in ivThumb
+            //display item.thumbnailUrl in ivThumb
+            val url = item.thumbnailUrl
+            Glide.with(ivThumb)
+                .load(url)
+                .circleCrop()
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
+                .fallback(R.drawable.ic_placeholder)
+                .into(ivThumb)
             setOnClickListener { onClick(item, adapterPosition, this) }
         }
     }
