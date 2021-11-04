@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.ListFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,13 +27,21 @@ class ListFragment : Fragment(R.layout.list_fragment) {
         return inflater.inflate(R.layout.list_fragment, container,false)
     }
 
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_items.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = ListAdapter(onClick = {listItem, position, view ->
-                TODO()
+
+                val listFragment = ListFragment()
+                val bundle: Bundle = Bundle()
+                bundle.putInt("id", listItem.id)
+                listFragment.arguments = bundle
+                val fragment = parentFragmentManager.beginTransaction()
+                fragment.replace(R.id.container, listFragment)
+                fragment.commit()
+
             })
         }
-    }*/
+    }
 }

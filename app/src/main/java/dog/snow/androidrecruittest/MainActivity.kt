@@ -14,7 +14,6 @@ class MainActivity : AppCompatActivity(R.layout.main_activity){
 
         val fragmentManager: FragmentManager = supportFragmentManager
         val listFragment = ListFragment()
-        val detailsFragment = DetailsFragment()
 
         fragmentManager.beginTransaction().add(R.id.container, listFragment)
     }

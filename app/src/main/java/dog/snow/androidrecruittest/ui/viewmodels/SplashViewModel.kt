@@ -9,5 +9,11 @@ class SplashViewModel(private val albumRepo: AlbumRepo,
                       private val photoRepo: PhotoRepo,
                       private val userRepo: UserRepo) : ViewModel() {
 
+        suspend fun getPhotos (limit: Int) = photoRepo.getPhotos(limit)
+
+        suspend fun getAlbums () {
+
+            //albumRepo.getAlbums()
+        }
 
 }

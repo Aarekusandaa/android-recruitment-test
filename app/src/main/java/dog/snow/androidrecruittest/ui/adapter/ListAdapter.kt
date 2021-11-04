@@ -42,7 +42,7 @@ class ListAdapter(private val onClick: (item: ListItem, position: Int, view: Vie
                 .error(R.drawable.ic_placeholder)
                 .fallback(R.drawable.ic_placeholder)
                 .into(ivThumb)
-            setOnClickListener { onClick(item, adapterPosition, this) }
+            setOnClickListener { onClick(item, absoluteAdapterPosition, this) }
         }
     }
 
