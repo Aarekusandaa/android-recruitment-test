@@ -10,7 +10,7 @@ import dog.snow.androidrecruittest.ui.model.ListItem
 interface ListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushList(listList: List<ListItem>)
+    suspend fun pushList(listList: ListItem)
 
     @Query("SELECT * FROM List")
     suspend fun getList(): List<ListItem>

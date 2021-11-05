@@ -10,7 +10,7 @@ import dog.snow.androidrecruittest.ui.model.Detail
 interface DetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushDetails(detailsList: List<Detail>)
+    suspend fun pushDetails(detailsList: Detail)
 
     @Query("SELECT * FROM Details WHERE id = :id")
     suspend fun getDetails(id: Int): Detail

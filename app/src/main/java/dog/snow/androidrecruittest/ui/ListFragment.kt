@@ -34,7 +34,7 @@ class ListFragment : Fragment(R.layout.list_fragment) {
             adapter = ListAdapter(onClick = {listItem, position, view ->
 
                 val listFragment = ListFragment()
-                val bundle: Bundle = Bundle()
+                val bundle = Bundle()
                 bundle.putInt("id", listItem.id)
                 listFragment.arguments = bundle
                 val fragment = parentFragmentManager.beginTransaction()

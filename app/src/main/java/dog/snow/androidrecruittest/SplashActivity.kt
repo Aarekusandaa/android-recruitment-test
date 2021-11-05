@@ -8,7 +8,12 @@ import dog.snow.androidrecruittest.ui.viewmodels.SplashViewModel
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.room.Room
+import com.google.gson.Gson
+import dog.snow.androidrecruittest.repository.database.AppDatabase
 import dog.snow.androidrecruittest.ui.NetworkTools
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
@@ -17,6 +22,17 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val gson = Gson()
+        val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .baseUrl("https://jsonplaceholder.typicode.com/")
+            .build()
+
+        val db = Room.databaseBuilder(
+            this,
+            AppDatabase::class.java, "users_db"
+        ).build()
 
         NetworkTools.registerNetworkCallbacks(this)
         NetworkTools.networkState.observe(this, Observer { isConnected ->

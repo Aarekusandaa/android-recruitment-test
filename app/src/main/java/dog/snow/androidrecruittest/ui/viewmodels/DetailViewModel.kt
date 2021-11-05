@@ -6,16 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dog.snow.androidrecruittest.repository.repos.DetailRepo
 import dog.snow.androidrecruittest.ui.model.Detail
+import dog.snow.androidrecruittest.ui.model.ListItem
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val detailRepo: DetailRepo) : ViewModel() {
 
-    private val _detail = MutableLiveData<Detail>()
-    val detail: LiveData<Detail> = _detail
+    var detail : MutableLiveData<Detail> = MutableLiveData()
 
-    init {
-        viewModelScope.launch {
-            //_detail.value = detailRepo.getDetails()
-        }
+    suspend fun getDetails(id: Int){
+        detailRepo.getDetails(id)
     }
 }
