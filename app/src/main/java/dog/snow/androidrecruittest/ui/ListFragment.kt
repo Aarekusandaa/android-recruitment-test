@@ -4,20 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import androidx.activity.viewModels
+import androidx.fragment.app.*
 import androidx.fragment.app.ListFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.ui.adapter.ListAdapter
+import dog.snow.androidrecruittest.ui.viewmodels.ListViewModel
+import dog.snow.androidrecruittest.ui.viewmodels.SplashViewModel
 import kotlinx.android.synthetic.main.list_fragment.*
 
 class ListFragment : Fragment(R.layout.list_fragment) {
 
-    private var layoutManager: RecyclerView.LayoutManager? = null
-    private var adapter: ListAdapter? = null
+    private val viewModel:ListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

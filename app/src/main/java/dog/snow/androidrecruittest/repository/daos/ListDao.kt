@@ -13,5 +13,5 @@ interface ListDao {
     suspend fun pushList(listList: List<ListItem>)
 
     @Query("SELECT * FROM List")
-    suspend fun getList(): ListItem
+    suspend fun getList(): List<ListItem>
 }
