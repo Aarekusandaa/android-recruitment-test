@@ -9,11 +9,11 @@ class ListRepo(
     private val db: AppDatabase,
     private val listDao: ListDao){
 
-    suspend fun getList() : List<ListItem> {
+    suspend fun getList(listDao: ListDao) : List<ListItem> {
         return  listDao.getList()
     }
 
-    suspend fun pushList(listList: ListItem){
+    suspend fun pushList(listDao: ListDao, listList: ListItem){
         listDao.pushList(listList)
     }
 

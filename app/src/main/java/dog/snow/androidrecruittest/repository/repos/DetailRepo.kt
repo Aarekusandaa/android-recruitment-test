@@ -8,11 +8,11 @@ class DetailRepo(
     private val db: AppDatabase,
     private val detailsDao: DetailsDao){
 
-    suspend fun getDetails(id: Int) : Detail{
+    suspend fun getDetails(detailsDao: DetailsDao, id: Int) : Detail{
         return detailsDao.getDetails(id)
     }
 
-    suspend fun pushDetails(detailsList: Detail){
+    suspend fun pushDetails(detailsDao: DetailsDao, detailsList: Detail){
         detailsDao.pushDetails(detailsList)
     }
 

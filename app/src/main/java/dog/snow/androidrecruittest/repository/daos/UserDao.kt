@@ -1,22 +1,20 @@
 package dog.snow.androidrecruittest.repository.daos
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import dog.snow.androidrecruittest.repository.model.RawUser
+import androidx.room.*
+import dog.snow.androidrecruittest.repository.model.RawUserEntity
 
+@Dao
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushUsers(userList: List<RawUser>)
+    suspend fun pushUsers(userList: List<RawUserEntity>)
 
     @Query("SELECT * FROM User WHERE id = :id")
-    suspend fun getUser(id: Int): RawUser
+    suspend fun getUser(id: Int): RawUserEntity
 
     @Query("SELECT * FROM User")
-    suspend fun getUsers(): List<RawUser>
+    suspend fun getUsers(): List<RawUserEntity>
 
     @Delete
-    suspend fun deleteUser(user: RawUser)
+    suspend fun deleteUser(user: RawUserEntity)
 }
