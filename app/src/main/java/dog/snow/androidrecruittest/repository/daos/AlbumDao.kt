@@ -9,7 +9,10 @@ interface AlbumDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun pushAlbums(albumList: List<RawAlbumEntity>)
 
-    @Query("SELECT * FROM User WHERE id = :id")
+    /*@Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun pushAlbums(albumList: RawAlbumEntity)*/
+
+    @Query("SELECT * FROM Album WHERE id = :id")
     suspend fun getAlbum(id: Int): RawAlbumEntity
 
     @Query("SELECT userId FROM Album")

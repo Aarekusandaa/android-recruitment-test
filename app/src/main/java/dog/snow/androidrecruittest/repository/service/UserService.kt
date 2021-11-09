@@ -12,5 +12,5 @@ interface UserService {
     //TODO tylko te {id} co są w albumach
     @Headers("User-agent: Aarekusandaa")
     @GET("users/{id}")
-    suspend fun getUsers(@Path("id") id: Int): Response<List<RawUser>>
+    suspend fun getUsers(@Path("id") id: Int): Response<RawUser>
 }

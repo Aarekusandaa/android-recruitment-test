@@ -9,10 +9,10 @@ import retrofit2.Retrofit
 
 
 class AlbumRepo (
-    private val db: AppDatabase,
+    /*private val db: AppDatabase,
     private val retrofit: Retrofit,
     private val albumService: AlbumService,
-    private val albumDao: AlbumDao) {
+    private val albumDao: AlbumDao*/) {
 
     suspend fun getAlbums(albumDao: AlbumDao): List<RawAlbumEntity>{
         return albumDao.getAlbums()
@@ -42,12 +42,18 @@ class AlbumRepo (
         return albums
     }
 
+    fun mapAlbum (data: RawAlbum) : RawAlbumEntity{
+        var albums: RawAlbumEntity = RawAlbumEntity(data.id, data.userId, data.title)
+        return albums
+    }
+
     suspend fun cacheAlbums(albumDao: AlbumDao, albumService: AlbumService, albumsIds: List<Int>) : Boolean{     //: Boolean
         albumsIds.forEach {id ->
             val retrofitResponse = albumService.getAlbums(id)
             if (retrofitResponse.isSuccessful) {
                 retrofitResponse.body()?.let { data ->
-                    albumDao.pushAlbums(mapAlbum(data))
+                    val listAlbum = listOf<RawAlbumEntity>(mapAlbum(data))
+                    albumDao.pushAlbums(listAlbum)
                 }
             }
             return true

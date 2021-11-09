@@ -12,5 +12,5 @@ interface AlbumService {
     //TODO tylko te {id} co są w zdjęciach
     @Headers("User-agent: Aarekusandaa")
     @GET("albums/{id}")
-    suspend fun getAlbums(@Path("id") id: Int): Response<List<RawAlbum>>
+    suspend fun getAlbums(@Path("id") id: Int): Response<RawAlbum>
 }

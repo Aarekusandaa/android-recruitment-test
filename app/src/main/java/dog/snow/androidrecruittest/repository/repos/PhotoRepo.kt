@@ -9,10 +9,10 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class PhotoRepo(
-    private val db: AppDatabase,
+    /*private val db: AppDatabase,
     private val retrofit: Retrofit,
     private val photoService: PhotoService,
-    private val photoDao: PhotoDao){
+    private val photoDao: PhotoDao*/){
 
     suspend fun getPhotos(photoService: PhotoService, limit: Int) : Response<List<RawPhoto>>{
         return photoService.getPhotos(limit)

@@ -6,8 +6,8 @@ import dog.snow.androidrecruittest.ui.model.ListItem
 import retrofit2.Retrofit
 
 class ListRepo(
-    private val db: AppDatabase,
-    private val listDao: ListDao){
+    /*private val db: AppDatabase,
+    private val listDao: ListDao*/){
 
     suspend fun getList(listDao: ListDao) : List<ListItem> {
         return  listDao.getList()

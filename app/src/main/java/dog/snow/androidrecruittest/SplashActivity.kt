@@ -55,10 +55,10 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
         NetworkTools.networkState.observe(this, Observer { isConnected ->
             if (isConnected){
 
-                viewModel.success.observe(this, Observer { success ->
+                viewModel.success.observe(this@SplashActivity, Observer { success ->
                     if (!success){
                         viewModel.cacheData(photoService, photoDao, 100, albumDao, albumService,
-                        userDao, listDao, detailsDao)
+                        userDao, userService, listDao, detailsDao)
                     }
                     else{
                         val intent = Intent(this, MainActivity::class.java)

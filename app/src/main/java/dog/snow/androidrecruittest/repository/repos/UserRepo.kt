@@ -11,12 +11,12 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class UserRepo(
-    private val db: AppDatabase,
+    /*private val db: AppDatabase,
     private val retrofit: Retrofit,
     private val userService: UserService,
-    private val userDao: UserDao) {
+    private val userDao: UserDao*/) {
 
-    suspend fun getUsers(userService: UserService, id: Int): Response<List<RawUser>> {
+    suspend fun getUsers(userService: UserService, id: Int): Response<RawUser> {
         return userService.getUsers(id)
     }
 
@@ -44,7 +44,12 @@ class UserRepo(
         return users
     }
 
-    suspend fun cacheUsers(userDao: UserDao, usersIds: List<Int>) : Boolean{     //
+    fun mapUsers (data: RawUser) : RawUserEntity{
+        val users: RawUserEntity = RawUserEntity(data.id, data.name, data.username, data.email, data.phone, data.website)
+        return users
+    }
+
+    suspend fun cacheUsers(userDao: UserDao, userService: UserService, usersIds: List<Int>) : Boolean{     //
         usersIds.forEach {id ->
             val retrofitResponse = userService.getUsers(id)
             if (retrofitResponse.isSuccessful) {

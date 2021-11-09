@@ -18,16 +18,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SplashViewModel(
-    private val albumRepo: AlbumRepo,
+    /*private val albumRepo: AlbumRepo,
     private val photoRepo: PhotoRepo,
     private val userRepo: UserRepo,
     private val listRepo: ListRepo,
-    private val detailRepo: DetailRepo
+    private val detailRepo: DetailRepo*/
     ) : ViewModel() {
+
+    val photoRepo: PhotoRepo = PhotoRepo()
+    val albumRepo: AlbumRepo = AlbumRepo()
+    val userRepo: UserRepo = UserRepo()
+    val listRepo: ListRepo = ListRepo()
+    val detailRepo: DetailRepo = DetailRepo()
 
     var userList : MutableLiveData<List<RawUser>> = MutableLiveData()
 
-    val success: MutableLiveData<Boolean> = MutableLiveData()
+    var success: MutableLiveData<Boolean> = MutableLiveData(false)
 
     suspend fun getPhotos (photoService: PhotoService, photoDao: PhotoDao, limit: Int) : Boolean{
         return photoRepo.cachePhotos(photoService, photoDao, limit)
@@ -37,8 +43,8 @@ class SplashViewModel(
         return albumRepo.cacheAlbums(albumDao, albumService, photoRepo.getAlbumsId(photoDao))
     }
 
-    suspend fun getUsers(userDao: UserDao, albumDao: AlbumDao) : Boolean{
-        return userRepo.cacheUsers(userDao, albumRepo.getUsersId(albumDao))
+    suspend fun getUsers(userDao: UserDao, userService: UserService, albumDao: AlbumDao) : Boolean{
+        return userRepo.cacheUsers(userDao, userService, albumRepo.getUsersId(albumDao))
     }
 
     suspend fun setListItemTable(listDao: ListDao, albumDao: AlbumDao, photoDao: PhotoDao) : Boolean{
@@ -74,19 +80,23 @@ class SplashViewModel(
     }
 
     fun cacheData(photoService: PhotoService, photoDao: PhotoDao, limit: Int, albumDao: AlbumDao,
-                    albumService: AlbumService, userDao: UserDao, listDao: ListDao, detailsDao: DetailsDao){
+                    albumService: AlbumService, userDao: UserDao, userService: UserService, listDao: ListDao, detailsDao: DetailsDao){
         viewModelScope.launch{
             withContext(Dispatchers.IO){
                 val res1 = getPhotos(photoService, photoDao,limit)
                 val res2 = getAlbums(albumDao, albumService, photoDao)
-                val res3 = getUsers(userDao, albumDao)
+                val res3 = getUsers(userDao, userService, albumDao)
                 if (res1 && res2 && res3){
                     val res4 = setListItemTable(listDao, albumDao, photoDao)
                     val res5 = setDetailTable(detailsDao, userDao, albumDao, photoDao)
-                    success.value = res4 && res5
+                    withContext(Dispatchers.Main){
+                        success.value = res4 && res5
+                    }
                 }
                 else{
-                    success.value = false
+                    withContext(Dispatchers.Main){
+                        success.value = false
+                    }
                 }
             }
         }

@@ -12,7 +12,7 @@ interface PhotoDao {
     @Query("SELECT id FROM Photo")
     suspend fun getPhotosId(): List<Int>
 
-    @Query("SELECT * FROM Details WHERE id = :id")
+    @Query("SELECT * FROM Photo WHERE id = :id")
     suspend fun getPhoto(id: Int): RawPhotoEntity
 
     @Query("SELECT albumId FROM Photo")
