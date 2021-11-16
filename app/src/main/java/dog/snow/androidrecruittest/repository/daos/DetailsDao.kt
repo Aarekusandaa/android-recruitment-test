@@ -13,5 +13,5 @@ interface DetailsDao {
     suspend fun pushDetails(detailsList: Detail)
 
     @Query("SELECT * FROM Details WHERE id = :id")
-    suspend fun getDetails(id: Int): Detail
+    suspend fun getDetails(id: Int?): Detail
 }

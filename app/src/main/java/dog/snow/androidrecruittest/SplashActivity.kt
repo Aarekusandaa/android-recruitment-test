@@ -16,6 +16,7 @@ import dog.snow.androidrecruittest.repository.database.AppDatabase
 import dog.snow.androidrecruittest.repository.service.AlbumService
 import dog.snow.androidrecruittest.repository.service.PhotoService
 import dog.snow.androidrecruittest.repository.service.UserService
+import dog.snow.androidrecruittest.ui.Connection
 import dog.snow.androidrecruittest.ui.NetworkTools
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,18 +54,10 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
 
         NetworkTools.registerNetworkCallbacks(this)
         NetworkTools.networkState.observe(this, Observer { isConnected ->
-            if (isConnected){
+            if (isConnected == Connection.CONNECTED){
+                viewModel.cacheData(photoService, photoDao, 100, albumDao, albumService,
+                    userDao, userService, listDao, detailsDao)
 
-                viewModel.success.observe(this@SplashActivity, Observer { success ->
-                    if (!success){
-                        viewModel.cacheData(photoService, photoDao, 100, albumDao, albumService,
-                        userDao, userService, listDao, detailsDao)
-                    }
-                    else{
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                    }
-                })
 
 
                 /*viewModel.userList.observe(this,{user->
@@ -91,8 +84,15 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)*/
             }
-            else{
+            else if (isConnected == Connection.NOT_CONNECTED){
                 showError("internet disconnection")
+            }
+        })
+
+        viewModel.success.observe(this@SplashActivity, Observer { success ->
+            if (success){
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }
         })
     }

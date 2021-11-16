@@ -13,6 +13,7 @@ import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.ui.adapter.ListAdapter
 import dog.snow.androidrecruittest.ui.viewmodels.ListViewModel
 import dog.snow.androidrecruittest.ui.viewmodels.SplashViewModel
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.list_fragment.*
 
 class ListFragment : Fragment(R.layout.list_fragment) {
@@ -25,23 +26,51 @@ class ListFragment : Fragment(R.layout.list_fragment) {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.list_fragment, container,false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rv_items.apply {
-            layoutManager = LinearLayoutManager(activity)
-            adapter = ListAdapter(onClick = {listItem, position, view ->
 
-                val listFragment = ListFragment()
-                val bundle = Bundle()
-                bundle.putInt("id", listItem.id)
-                listFragment.arguments = bundle
-                val fragment = parentFragmentManager.beginTransaction()
-                fragment.replace(R.id.container, listFragment)
-                fragment.commit()
+        viewModel.list.observe(viewLifecycleOwner, { list ->
+            rv_items.apply {
+                layoutManager = LinearLayoutManager(activity)
 
-            })
-        }
+                adapter = ListAdapter(onClick = {listItem, position, view ->
+
+                    val listFragment = ListFragment()
+                    val bundle = Bundle()
+                    bundle.putInt("id", listItem.id)
+                    listFragment.arguments = bundle
+                    val fragment = parentFragmentManager.beginTransaction()
+                    fragment.replace(R.id.container, listFragment)
+                    fragment.commit()
+                })
+                //adapter?.also { it.setList(list) }
+            }
+
+        })
+
+
     }
 }
+
+/*
+viewModel.list.observe(viewLifecycleOwner, { list ->
+    rv_items.apply {
+        layoutManager = LinearLayoutManager(activity)
+
+        adapter = ListAdapter(onClick = {listItem, position, view ->
+
+            val listFragment = ListFragment()
+            val bundle = Bundle()
+            bundle.putInt("id", listItem.id)
+            listFragment.arguments = bundle
+            val fragment = parentFragmentManager.beginTransaction()
+            fragment.replace(R.id.container, listFragment)
+            fragment.commit()
+        })
+        adapter.setList(list)
+    }
+
+})*/

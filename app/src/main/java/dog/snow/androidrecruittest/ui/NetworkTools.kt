@@ -15,7 +15,7 @@ import kotlin.coroutines.coroutineContext
 class NetworkTools {
     companion object{
 
-        var networkState = MutableLiveData<Boolean>(false)
+        var networkState = MutableLiveData<Connection>(Connection.UNKNOWN)
 
         //region ASYNC
         private var networkCallback: NetworkCallback? = null
@@ -26,7 +26,7 @@ class NetworkTools {
                     override fun onAvailable(network: Network) {
                         GlobalScope.launch {
                             withContext(Dispatchers.Main){
-                                networkState.value = true
+                                networkState.value = Connection.CONNECTED
                             }
                         }
                     }
@@ -34,7 +34,7 @@ class NetworkTools {
                     override fun onLost(network: Network) {
                         GlobalScope.launch {
                             withContext(Dispatchers.Main){
-                                networkState.value = false
+                                networkState.value = Connection.NOT_CONNECTED
                             }
                         }
                     }
@@ -48,7 +48,7 @@ class NetworkTools {
                     networkCallback as NetworkCallback
                 )
             } catch (e: Exception) {
-                networkState.value = false
+                networkState.value = Connection.NOT_CONNECTED
             }
         }
 
@@ -85,4 +85,8 @@ class NetworkTools {
 
         //endregion
     }
+}
+
+enum class Connection{
+   CONNECTED, NOT_CONNECTED, UNKNOWN,
 }

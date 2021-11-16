@@ -14,7 +14,7 @@ class DetailViewModel(private val detailRepo: DetailRepo) : ViewModel() {
 
     var detail : MutableLiveData<Detail> = MutableLiveData()
 
-    suspend fun getDetails(detailsDao: DetailsDao, id: Int){
-        detailRepo.getDetails(detailsDao, id)
+    suspend fun getDetails(detailsDao: DetailsDao, id: Int? = -1): Detail{
+        return detailRepo.getDetails(detailsDao, id)
     }
 }
