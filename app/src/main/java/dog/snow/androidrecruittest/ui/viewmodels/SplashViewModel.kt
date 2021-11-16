@@ -53,7 +53,7 @@ class SplashViewModel(
             val album = albumRepo.getAlbum(albumDao, photo.albumId)
             val data = ListItem(photo.id, photo.title, album.title, photo.thumbnailUrl)
             listRepo.pushList(listDao, data)
-            return false
+            //return false
         }
         return true
     }
@@ -66,15 +66,15 @@ class SplashViewModel(
             val data = Detail(photo.id, photo.title, album.title, user.username, user.email, user.phone, photo.url)
             detailRepo.pushDetails(detailsDao, data)
             photoRepo.deletePhoto(photoDao, photo)
-            return false
+            //return false
         }
         albumRepo.getAlbums(albumDao).forEach { album->
             albumRepo.deleteAlbum(albumDao, album)
-            return false
+            //return false
         }
         userRepo.getUsers(userDao).forEach { user ->
             userRepo.deleteUser(userDao, user)
-            return false
+            //return false
         }
         return true
     }

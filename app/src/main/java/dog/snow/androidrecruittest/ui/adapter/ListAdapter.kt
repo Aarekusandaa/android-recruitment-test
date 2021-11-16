@@ -66,7 +66,7 @@ class ListAdapter(private val onClick: (item: ListItem, position: Int, view: Vie
 }
 */
 
-class ListAdapter internal constructor(
+class ListAdapter constructor(
     private val onClick: (item: ListItem, position: Int, view: View) -> Unit
 ) : RecyclerView.Adapter<ListAdapter.ViewHolder>() {
 
@@ -129,10 +129,10 @@ class ListAdapter internal constructor(
                 .fallback(R.drawable.ic_placeholder)
                 .into(ivThumb)
             setOnClickListener {
-                setOnClickListener { onClick(item, absoluteAdapterPosition, this)}
+                setOnClickListener { onClick(item, absoluteAdapterPosition, this) }
+            }
         }
     }
-
     //interface for items clicks
     /*internal interface OnListFragmentInteractionListener {
         fun onListFragmentClickInteraction(file: ListItem, position: Int)

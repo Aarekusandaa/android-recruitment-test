@@ -56,7 +56,7 @@ class DetailsFragment : Fragment(R.layout.details_fragment){
         super.onViewCreated(view, savedInstanceState)
 
         val db = Room.databaseBuilder(
-            this@DetailsFragment,
+            requireContext(),
             AppDatabase::class.java, "users_db"
         ).build()
 
@@ -69,7 +69,7 @@ class DetailsFragment : Fragment(R.layout.details_fragment){
             }
         }
 
-        viewModel.detail.observe(this, { detail ->
+        viewModel.detail.observe(viewLifecycleOwner, { detail ->
             tv_photo_title.setText(detail.photoTitle)
             tv_album_title.setText(detail.albumTitle)
             tv_username.setText(detail.username)
