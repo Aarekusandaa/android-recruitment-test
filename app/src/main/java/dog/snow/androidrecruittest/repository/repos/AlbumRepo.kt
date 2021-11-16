@@ -56,8 +56,8 @@ class AlbumRepo (
                     albumDao.pushAlbums(listAlbum)
                 }
             }
-            return true
+            //return true
         }
-        return false
+        return true
     }
 }

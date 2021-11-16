@@ -8,13 +8,24 @@ import dog.snow.androidrecruittest.repository.daos.ListDao
 import dog.snow.androidrecruittest.repository.model.RawPhoto
 import dog.snow.androidrecruittest.repository.repos.ListRepo
 import dog.snow.androidrecruittest.ui.model.ListItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ListViewModel(private val listRepo: ListRepo) : ViewModel() {
+class ListViewModel() : ViewModel() {
 
-    var list : MutableLiveData<List<ListItem>> = MutableLiveData()
+    val list : MutableLiveData<List<ListItem>> = MutableLiveData(emptyList())
+    private val listRepo = ListRepo()
 
-    suspend fun getList(listDao: ListDao){
-        listRepo.getList(listDao)
+    fun getList(listDao: ListDao){
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val temp = listRepo.getList(listDao)
+                withContext(Dispatchers.Main){
+                    list.value = temp
+                }
+            }
+        }
+
     }
 }

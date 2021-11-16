@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import dog.snow.androidrecruittest.R
 import dog.snow.androidrecruittest.ui.model.ListItem
 /*
@@ -111,7 +113,6 @@ class ListAdapter constructor(
     inner class ViewHolder(itemView: View,
                            private val onClick: (item: ListItem, position: Int, view: View) -> Unit)
         : RecyclerView.ViewHolder(itemView) {
-        private lateinit var listItem: ListItem
 
         fun bind(item: ListItem) = with(itemView) {
             val ivThumb: ImageView = findViewById(R.id.iv_thumb)
@@ -120,7 +121,11 @@ class ListAdapter constructor(
             tvTitle.text = item.title
             tvAlbumTitle.text = item.albumTitle
             //display item.thumbnailUrl in ivThumb
-            val url = item.thumbnailUrl
+            val url = GlideUrl(
+                item.thumbnailUrl, LazyHeaders.Builder()
+                    .addHeader("User-Agent", "Lejdi")
+                    .build()
+            )
             Glide.with(ivThumb)
                 .load(url)
                 .circleCrop()

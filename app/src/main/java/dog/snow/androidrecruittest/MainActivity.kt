@@ -8,13 +8,23 @@ import androidx.fragment.app.add
 import dog.snow.androidrecruittest.ui.DetailsFragment
 
 class MainActivity : AppCompatActivity(R.layout.main_activity){
+
+    lateinit var fragmentManager: FragmentManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        val fragmentManager: FragmentManager = supportFragmentManager
+        fragmentManager = supportFragmentManager
         val listFragment = ListFragment()
 
         fragmentManager.beginTransaction().add(R.id.container, listFragment)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val listFragment = ListFragment()
+
+        fragmentManager.beginTransaction().replace(R.id.container, listFragment).commit()
     }
 }

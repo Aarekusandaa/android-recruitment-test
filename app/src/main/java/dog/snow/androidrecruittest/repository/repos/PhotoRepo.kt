@@ -35,7 +35,8 @@ class PhotoRepo(
     }
 
     suspend fun getAlbumsId(photoDao: PhotoDao) : List<Int>{
-        return photoDao.getAlbumsId()
+        val albums = photoDao.getAlbumsId()
+        return albums.distinct()    //wywala powtórzenai
     }
 
     /*fun mapPhoto (data: RawPhoto) : RawPhotoEntity{
