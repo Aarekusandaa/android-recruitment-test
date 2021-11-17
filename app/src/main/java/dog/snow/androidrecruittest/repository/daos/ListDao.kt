@@ -14,4 +14,7 @@ interface ListDao {
 
     @Query("SELECT * FROM List")
     suspend fun getList(): List<ListItem>
+
+    @Query("SELECT * FROM List WHERE title LIKE '%' || :text || '%' OR albumTitle LIKE '%' || :text || '%'")
+    suspend fun getSearchList(text: String): List<ListItem>
 }

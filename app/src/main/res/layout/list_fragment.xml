@@ -25,6 +25,7 @@
     <include layout="@layout/layout_search" />
 
     <include
+        android:id="@+id/empty"
         layout="@layout/layout_empty_view"
         tools:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

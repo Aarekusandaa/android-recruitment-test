@@ -13,6 +13,10 @@ class ListRepo(
         return  listDao.getList()
     }
 
+    suspend fun getSearchList(listDao: ListDao, text: String): List<ListItem>{
+        return listDao.getSearchList(text)
+    }
+
     suspend fun pushList(listDao: ListDao, listList: ListItem){
         listDao.pushList(listList)
     }

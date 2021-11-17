@@ -26,6 +26,17 @@ class ListViewModel() : ViewModel() {
                 }
             }
         }
+    }
+
+    fun getSearchList(listDao: ListDao, text: String){
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val temp = listRepo.getSearchList(listDao, text)
+                withContext(Dispatchers.Main){
+                    list.value = temp
+                }
+            }
+        }
 
     }
 }

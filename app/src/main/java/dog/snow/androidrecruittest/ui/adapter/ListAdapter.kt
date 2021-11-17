@@ -134,7 +134,7 @@ class ListAdapter constructor(
                 .fallback(R.drawable.ic_placeholder)
                 .into(ivThumb)
             setOnClickListener {
-                setOnClickListener { onClick(item, absoluteAdapterPosition, this) }
+                 onClick(item, absoluteAdapterPosition, this)
             }
         }
     }
