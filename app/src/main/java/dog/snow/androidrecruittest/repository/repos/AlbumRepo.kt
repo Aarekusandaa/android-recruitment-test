@@ -53,7 +53,7 @@ class AlbumRepo () {
         return albums
     }
 
-    suspend fun cacheAlbums(albumDao: AlbumDao, albumService: AlbumService, albumsIds: List<Int>) : Boolean{     //: Boolean
+    suspend fun cacheAlbums(albumDao: AlbumDao, albumService: AlbumService, albumsIds: List<Int>) : String{     //: Boolean
         albumsIds.forEach {id ->
             try {
                 val retrofitResponse = albumService.getAlbums(id)
@@ -67,22 +67,22 @@ class AlbumRepo () {
                             }
                         }catch (e: Exception){
                             println("Error DAO-> album id $id")
-                            return false
+                            return "Error DAO-> album id $id"
                         }
                     }
                 }else{
                     when(retrofitResponse.code()){
                         in 400..499 -> {
                             println("Error SERVICE: Client-> album id $id")
-                            return false
+                            return "Error SERVICE: Client-> album id $id"
                         }
                         in 500..599 -> {
                             println("Error SERVICE: Server-> album id $id")
-                            return false
+                            return "Error SERVICE: Server-> album id $id"
                         }
                         else -> {
                             println("Error SERVICE-> album id $id")
-                            return false
+                            return "Error SERVICE-> album id $id"
                         }
                     }
                 }
@@ -90,19 +90,19 @@ class AlbumRepo () {
                 when (e){
                     is SocketTimeoutException ->{
                         println("Error SERVICE: SocketTimeoutException-> album id $id")
-                        return false
+                        return "Error SERVICE: SocketTimeoutException-> album id $id"
                     }
                     is UnknownHostException -> {
                         println("Error SERVICE: UnknownHostException-> album id $id")
-                        return false
+                        return "Error SERVICE: UnknownHostException-> album id $id"
                     }
                     else -> {
                         println("Error SERVICE: Exception-> album id $id")
-                        return false
+                        return "Error SERVICE: Exception-> album id $id"
                     }
                 }
             }
         }
-        return true
+        return ""
     }
 }

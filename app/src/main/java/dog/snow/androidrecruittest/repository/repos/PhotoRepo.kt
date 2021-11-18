@@ -61,7 +61,7 @@ class PhotoRepo(
         return photos
     }
 
-    suspend fun cachePhotos(photoService: PhotoService, photoDao: PhotoDao, limit: Int): Boolean {
+    suspend fun cachePhotos(photoService: PhotoService, photoDao: PhotoDao, limit: Int): String {
         try {
             val retrofitResponse = photoService.getPhotos(limit)
             if (retrofitResponse.isSuccessful) {
@@ -73,23 +73,23 @@ class PhotoRepo(
                         }
                     }catch (e: Exception){
                         println("Error DAO-> photo")
-                        return false
+                        return "Error DAO-> photo"
                     }
                 }
-                return true
+                return ""
             }else{
                 when(retrofitResponse.code()){
                     in 400..499 -> {
                         println("Error SERVICE: Client-> photo")
-                        return false
+                        return "Error SERVICE: Client-> photo"
                     }
                     in 500..599 -> {
                         println("Error SERVICE: Server-> photo")
-                        return false
+                        return "Error SERVICE: Server-> photo"
                     }
                     else -> {
                         println("Error SERVICE-> photo")
-                        return false
+                        return "Error SERVICE-> photo"
                     }
                 }
             }
@@ -97,15 +97,15 @@ class PhotoRepo(
             when (e){
                 is SocketTimeoutException ->{
                     println("Error SERVICE: SocketTimeoutException-> photo")
-                    return false
+                    return "Error SERVICE: SocketTimeoutException-> photo"
                 }
                 is UnknownHostException -> {
                     println("Error SERVICE: UnknownHostException-> photo")
-                    return false
+                    return "Error SERVICE: UnknownHostException-> photo"
                 }
                 else -> {
                     println("Error SERVICE: Exception-> photo")
-                    return false
+                    return "Error SERVICE: Exception-> photo"
                 }
             }
         }

@@ -59,7 +59,7 @@ class UserRepo(
         return users
     }
 
-    suspend fun cacheUsers(userDao: UserDao, userService: UserService, usersIds: List<Int>) : Boolean{     //
+    suspend fun cacheUsers(userDao: UserDao, userService: UserService, usersIds: List<Int>) : String{     //
         usersIds.forEach {id ->
             try {
                 val retrofitResponse = userService.getUsers(id)
@@ -72,22 +72,22 @@ class UserRepo(
                             }
                         }catch (e: Exception){
                             println("Error DAO-> user id $id")
-                            return false
+                            return "Error DAO-> user id $id"
                         }
                     }
                 }else{
                     when(retrofitResponse.code()){
                         in 400..499 -> {
                             println("Error SERVICE: Client-> user id $id")
-                            return false
+                            return "Error SERVICE: Client-> user id $id"
                         }
                         in 500..599 -> {
                             println("Error SERVICE: Server-> user id $id")
-                            return false
+                            return "Error SERVICE: Server-> user id $id"
                         }
                         else -> {
                             println("Error SERVICE-> user id $id")
-                            return false
+                            return "Error SERVICE-> user id $id"
                         }
                     }
                 }
@@ -95,20 +95,20 @@ class UserRepo(
                 when (e){
                     is SocketTimeoutException ->{
                         println("Error SERVICE: SocketTimeoutException-> user id $id")
-                        return false
+                        return "Error SERVICE: SocketTimeoutException-> user id $id"
                     }
                     is UnknownHostException -> {
                         println("Error SERVICE: UnknownHostException-> user id $id")
-                        return false
+                        return "Error SERVICE: UnknownHostException-> user id $id"
                     }
                     else -> {
                         println("Error SERVICE: Exception-> user id $id")
-                        return false
+                        return "Error SERVICE: Exception-> user id $id"
                     }
                 }
             }
         }
-        return true
+        return ""
     }
 
 }

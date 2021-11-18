@@ -89,7 +89,7 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
 
         viewModel.failure.observe(this@SplashActivity, Observer { failure ->
             if (failure){
-               showError("Retrofit & Room error")
+               showError("Retrofit & Room error: ${viewModel.errorMessage.value}")
             }
         })
     }

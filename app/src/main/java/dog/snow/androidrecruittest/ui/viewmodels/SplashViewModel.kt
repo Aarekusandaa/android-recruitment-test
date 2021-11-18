@@ -31,16 +31,17 @@ class SplashViewModel() : ViewModel() {
 
     var success: MutableLiveData<Boolean> = MutableLiveData(false)
     var failure: MutableLiveData<Boolean> = MutableLiveData(false)
+    var errorMessage: MutableLiveData<String> = MutableLiveData("")
 
-    suspend fun getPhotos (photoService: PhotoService, photoDao: PhotoDao, limit: Int) : Boolean{
+    suspend fun getPhotos (photoService: PhotoService, photoDao: PhotoDao, limit: Int) : String{
         return photoRepo.cachePhotos(photoService, photoDao, limit)
     }
 
-    suspend fun getAlbums (albumDao: AlbumDao, albumService: AlbumService, photoDao: PhotoDao) : Boolean {
+    suspend fun getAlbums (albumDao: AlbumDao, albumService: AlbumService, photoDao: PhotoDao) : String {
         return albumRepo.cacheAlbums(albumDao, albumService, photoRepo.getAlbumsId(photoDao))
     }
 
-    suspend fun getUsers(userDao: UserDao, userService: UserService, albumDao: AlbumDao) : Boolean{
+    suspend fun getUsers(userDao: UserDao, userService: UserService, albumDao: AlbumDao) : String{
         return userRepo.cacheUsers(userDao, userService, albumRepo.getUsersId(albumDao))
     }
 
@@ -83,7 +84,7 @@ class SplashViewModel() : ViewModel() {
                     val res1 = getPhotos(photoService, photoDao,limit)
                     val res2 = getAlbums(albumDao, albumService, photoDao)
                     val res3 = getUsers(userDao, userService, albumDao)
-                    if (res1 && res2 && res3){
+                    if ((res1 == res2) && (res2 == res3) && (res1 == res3)){
                         val res4 = setListItemTable(listDao, albumDao, photoDao)
                         val res5 = setDetailTable(detailsDao, userDao, albumDao, photoDao)
                         withContext(Dispatchers.Main){
@@ -94,6 +95,15 @@ class SplashViewModel() : ViewModel() {
                         withContext(Dispatchers.Main){
                             success.value = false
                             failure.value = true
+                            if (res1 != ""){
+                                errorMessage.value = res1
+                            }else if (res2 != ""){
+                                errorMessage.value = res2
+                            }else if (res3 != ""){
+                                errorMessage.value = res3
+                            }else{
+                                errorMessage.value = ""
+                            }
                         }
                     }
                 }
