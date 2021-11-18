@@ -73,6 +73,7 @@ class PhotoRepo(
                         }
                     }catch (e: Exception){
                         println("Error DAO-> photo")
+                        return false
                     }
                 }
                 return true
@@ -80,12 +81,15 @@ class PhotoRepo(
                 when(retrofitResponse.code()){
                     in 400..499 -> {
                         println("Error SERVICE: Client-> photo")
+                        return false
                     }
                     in 500..599 -> {
                         println("Error SERVICE: Server-> photo")
+                        return false
                     }
                     else -> {
                         println("Error SERVICE-> photo")
+                        return false
                     }
                 }
             }
@@ -93,16 +97,18 @@ class PhotoRepo(
             when (e){
                 is SocketTimeoutException ->{
                     println("Error SERVICE: SocketTimeoutException-> photo")
+                    return false
                 }
                 is UnknownHostException -> {
                     println("Error SERVICE: UnknownHostException-> photo")
+                    return false
                 }
                 else -> {
                     println("Error SERVICE: Exception-> photo")
+                    return false
                 }
             }
         }
-        return false
     }
 
 }

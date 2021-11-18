@@ -63,9 +63,7 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
         val photoService: PhotoService = retrofit.create(PhotoService::class.java)
         val userService: UserService = retrofit.create(UserService::class.java)
 
-        if (NetworkTools.isInternetAvailable(this)){
-            NetworkTools.networkState.value = Connection.CONNECTED
-        }else{
+        if (!NetworkTools.isInternetAvailable(this)){
             NetworkTools.networkState.value = Connection.NOT_CONNECTED
         }
 
@@ -73,42 +71,9 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
         NetworkTools.networkState.observe(this, Observer { isConnected ->
             if (isConnected == Connection.CONNECTED){
 
-        /*val network = MutableLiveData<Boolean>(NetworkTools.isInternetAvailable(this))
-        network.observe(this, { state ->
-            if (state){*/
                 viewModel.cacheData(this, photoService, photoDao,
                     100, albumDao, albumService, userDao, userService, listDao, detailsDao)
-            /*}else{
-                showError("internet disconnection")
-            }
-        })*/
 
-
-
-
-                /*viewModel.userList.observe(this,{user->
-                    if (user == null){
-                        lifecycleScope.launch {
-                            withContext(Dispatchers.IO) {
-                                if (viewModel.getPhotos(photoService, photoDao, 100)) {
-                                    withContext(Dispatchers.Main) {
-                                        viewModel.getAlbums(albumDao, albumService, photoDao)
-                                        viewModel.getUsers(userDao, albumDao)
-                                        //viewModel.userList.value = viewModel.getUsers()
-                                        viewModel.setListItemTable(listDao, albumDao, photoDao)
-                                        viewModel.setDetailTable(detailsDao, userDao, albumDao, photoDao)
-                                    }
-                                } else {
-                                    withContext(Dispatchers.Main) {
-                                        showError("problem with photos")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)*/
             }
             else if (isConnected == Connection.NOT_CONNECTED){
                 showError("internet disconnection")
@@ -121,26 +86,21 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
                 startActivity(intent)
             }
         })
-    }
 
-    /*private fun again(context: Context, photoService: PhotoService, photoDao: PhotoDao, limit: Int, albumDao: AlbumDao, albumService: AlbumService,
-                      userDao: UserDao, userService: UserService, listDao: ListDao, detailsDao: DetailsDao){
-        if (!viewModel.cacheData(this, photoService, photoDao, 100, albumDao, albumService,
-                userDao, userService, listDao, detailsDao)){
-            showError("internet disconnection")
-        }
-    }*/
+        viewModel.failure.observe(this@SplashActivity, Observer { failure ->
+            if (failure){
+               showError("Retrofit & Room error")
+            }
+        })
+    }
 
     private fun showError(errorMessage: String?) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.cant_download_dialog_title)
             .setMessage(getString(R.string.cant_download_dialog_message, errorMessage))
-            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> if (NetworkTools.isInternetAvailable(this)){
-                NetworkTools.networkState.value = Connection.CONNECTED
-            }else{
+            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> if (!NetworkTools.isInternetAvailable(this)){
                 NetworkTools.networkState.value = Connection.NOT_CONNECTED
-            }}//again(this, photoService, photoDao,
-       // 100, albumDao, albumService, userDao, userService, listDao, detailsDao)
+            }}
             .setNegativeButton(R.string.cant_download_dialog_btn_negative) { _, _ -> finish() }
             .create()
             .apply { setCanceledOnTouchOutside(false) }

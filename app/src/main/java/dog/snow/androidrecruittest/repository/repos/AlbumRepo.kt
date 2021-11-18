@@ -11,11 +11,7 @@ import java.net.UnknownHostException
 import kotlin.Exception
 
 
-class AlbumRepo (
-    /*private val db: AppDatabase,
-    private val retrofit: Retrofit,
-    private val albumService: AlbumService,
-    private val albumDao: AlbumDao*/) {
+class AlbumRepo () {
 
     suspend fun getAlbums(albumDao: AlbumDao): List<RawAlbumEntity>{
         return albumDao.getAlbums()
@@ -71,18 +67,22 @@ class AlbumRepo (
                             }
                         }catch (e: Exception){
                             println("Error DAO-> album id $id")
+                            return false
                         }
                     }
                 }else{
                     when(retrofitResponse.code()){
                         in 400..499 -> {
                             println("Error SERVICE: Client-> album id $id")
+                            return false
                         }
                         in 500..599 -> {
                             println("Error SERVICE: Server-> album id $id")
+                            return false
                         }
                         else -> {
                             println("Error SERVICE-> album id $id")
+                            return false
                         }
                     }
                 }
@@ -90,17 +90,18 @@ class AlbumRepo (
                 when (e){
                     is SocketTimeoutException ->{
                         println("Error SERVICE: SocketTimeoutException-> album id $id")
+                        return false
                     }
                     is UnknownHostException -> {
                         println("Error SERVICE: UnknownHostException-> album id $id")
+                        return false
                     }
                     else -> {
                         println("Error SERVICE: Exception-> album id $id")
+                        return false
                     }
                 }
             }
-
-            //return true
         }
         return true
     }

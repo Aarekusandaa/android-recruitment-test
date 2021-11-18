@@ -72,18 +72,22 @@ class UserRepo(
                             }
                         }catch (e: Exception){
                             println("Error DAO-> user id $id")
+                            return false
                         }
                     }
                 }else{
                     when(retrofitResponse.code()){
                         in 400..499 -> {
                             println("Error SERVICE: Client-> user id $id")
+                            return false
                         }
                         in 500..599 -> {
                             println("Error SERVICE: Server-> user id $id")
+                            return false
                         }
                         else -> {
                             println("Error SERVICE-> user id $id")
+                            return false
                         }
                     }
                 }
@@ -91,17 +95,19 @@ class UserRepo(
                 when (e){
                     is SocketTimeoutException ->{
                         println("Error SERVICE: SocketTimeoutException-> user id $id")
+                        return false
                     }
                     is UnknownHostException -> {
                         println("Error SERVICE: UnknownHostException-> user id $id")
+                        return false
                     }
                     else -> {
                         println("Error SERVICE: Exception-> user id $id")
+                        return false
                     }
                 }
             }
         }
-        //return false
         return true
     }
 

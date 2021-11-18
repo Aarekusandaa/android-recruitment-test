@@ -19,13 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SplashViewModel(
-    /*private val albumRepo: AlbumRepo,
-    private val photoRepo: PhotoRepo,
-    private val userRepo: UserRepo,
-    private val listRepo: ListRepo,
-    private val detailRepo: DetailRepo*/
-    ) : ViewModel() {
+class SplashViewModel() : ViewModel() {
 
     val photoRepo: PhotoRepo = PhotoRepo()
     val albumRepo: AlbumRepo = AlbumRepo()
@@ -36,6 +30,7 @@ class SplashViewModel(
     var userList : MutableLiveData<List<RawUser>> = MutableLiveData()
 
     var success: MutableLiveData<Boolean> = MutableLiveData(false)
+    var failure: MutableLiveData<Boolean> = MutableLiveData(false)
 
     suspend fun getPhotos (photoService: PhotoService, photoDao: PhotoDao, limit: Int) : Boolean{
         return photoRepo.cachePhotos(photoService, photoDao, limit)
@@ -55,7 +50,6 @@ class SplashViewModel(
             val album = albumRepo.getAlbum(albumDao, photo.albumId)
             val data = ListItem(photo.id, photo.title, album.title, photo.thumbnailUrl)
             listRepo.pushList(listDao, data)
-            //return false
         }
         return true
     }
@@ -67,21 +61,16 @@ class SplashViewModel(
             val user = userRepo.getUser(userDao, album.userId)
             val data = Detail(photo.id, photo.title, album.title, user.username, user.email, user.phone, photo.url)
             detailRepo.pushDetails(detailsDao, data)
-            ////photoRepo.deletePhoto(photoDao, photo)
-            //return false
         }
         photoRepo.getPhotosId(photoDao).forEach { id->
             val photo = photoRepo.getPhoto(photoDao, id)
             photoRepo.deletePhoto(photoDao, photo)
-            //return false
         }
         albumRepo.getAlbums(albumDao).forEach { album->
             albumRepo.deleteAlbum(albumDao, album)
-            //return false
         }
         userRepo.getUsers(userDao).forEach { user ->
             userRepo.deleteUser(userDao, user)
-            //return false
         }
         return true
     }
@@ -104,6 +93,7 @@ class SplashViewModel(
                     else{
                         withContext(Dispatchers.Main){
                             success.value = false
+                            failure.value = true
                         }
                     }
                 }
