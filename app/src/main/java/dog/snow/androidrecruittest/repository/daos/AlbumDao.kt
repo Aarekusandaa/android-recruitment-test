@@ -7,7 +7,7 @@ import dog.snow.androidrecruittest.repository.model.RawAlbumEntity
 interface AlbumDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushAlbums(albumList: List<RawAlbumEntity>)
+    suspend fun pushAlbums(albumList: List<RawAlbumEntity>) : List<Long>
 
     /*@Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun pushAlbums(albumList: RawAlbumEntity)*/
@@ -22,5 +22,5 @@ interface AlbumDao {
     suspend fun getAlbums(): List<RawAlbumEntity>
 
     @Delete
-    suspend fun deleteAlbum(album: RawAlbumEntity)
+    suspend fun deleteAlbum(album: RawAlbumEntity) : Int
 }

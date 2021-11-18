@@ -18,7 +18,14 @@ class ListRepo(
     }
 
     suspend fun pushList(listDao: ListDao, listList: ListItem){
-        listDao.pushList(listList)
+        try {
+            val insert = listDao.pushList(listList)
+            if (insert < 0L){
+                throw Exception()
+            }
+        }catch (e: Exception){
+            println("Error DAO-> listItem")
+        }
     }
 
 

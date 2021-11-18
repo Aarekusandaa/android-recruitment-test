@@ -1,5 +1,6 @@
 package dog.snow.androidrecruittest.ui.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import dog.snow.androidrecruittest.repository.repos.*
 import dog.snow.androidrecruittest.repository.service.AlbumService
 import dog.snow.androidrecruittest.repository.service.PhotoService
 import dog.snow.androidrecruittest.repository.service.UserService
+import dog.snow.androidrecruittest.ui.NetworkTools
 import dog.snow.androidrecruittest.ui.model.Detail
 import dog.snow.androidrecruittest.ui.model.ListItem
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +67,11 @@ class SplashViewModel(
             val user = userRepo.getUser(userDao, album.userId)
             val data = Detail(photo.id, photo.title, album.title, user.username, user.email, user.phone, photo.url)
             detailRepo.pushDetails(detailsDao, data)
+            ////photoRepo.deletePhoto(photoDao, photo)
+            //return false
+        }
+        photoRepo.getPhotosId(photoDao).forEach { id->
+            val photo = photoRepo.getPhoto(photoDao, id)
             photoRepo.deletePhoto(photoDao, photo)
             //return false
         }
@@ -79,27 +86,32 @@ class SplashViewModel(
         return true
     }
 
-    fun cacheData(photoService: PhotoService, photoDao: PhotoDao, limit: Int, albumDao: AlbumDao,
-                    albumService: AlbumService, userDao: UserDao, userService: UserService, listDao: ListDao, detailsDao: DetailsDao){
-        viewModelScope.launch{
-            withContext(Dispatchers.IO){
-                val res1 = getPhotos(photoService, photoDao,limit)
-                val res2 = getAlbums(albumDao, albumService, photoDao)
-                val res3 = getUsers(userDao, userService, albumDao)
-                if (res1 && res2 && res3){
-                    val res4 = setListItemTable(listDao, albumDao, photoDao)
-                    val res5 = setDetailTable(detailsDao, userDao, albumDao, photoDao)
-                    withContext(Dispatchers.Main){
-                        success.value = res4 && res5
+    fun cacheData(context: Context, photoService: PhotoService, photoDao: PhotoDao, limit: Int, albumDao: AlbumDao,
+                    albumService: AlbumService, userDao: UserDao, userService: UserService, listDao: ListDao, detailsDao: DetailsDao){//: Boolean
+        //if (NetworkTools.isInternetAvailable(context)){
+            viewModelScope.launch{
+                withContext(Dispatchers.IO){
+                    val res1 = getPhotos(photoService, photoDao,limit)
+                    val res2 = getAlbums(albumDao, albumService, photoDao)
+                    val res3 = getUsers(userDao, userService, albumDao)
+                    if (res1 && res2 && res3){
+                        val res4 = setListItemTable(listDao, albumDao, photoDao)
+                        val res5 = setDetailTable(detailsDao, userDao, albumDao, photoDao)
+                        withContext(Dispatchers.Main){
+                            success.value = res4 && res5
+                        }
                     }
-                }
-                else{
-                    withContext(Dispatchers.Main){
-                        success.value = false
+                    else{
+                        withContext(Dispatchers.Main){
+                            success.value = false
+                        }
                     }
                 }
             }
+        /*}else{
+            return false
         }
+        return true*/
     }
 
 }

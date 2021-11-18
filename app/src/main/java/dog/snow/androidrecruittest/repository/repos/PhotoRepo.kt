@@ -7,6 +7,8 @@ import dog.snow.androidrecruittest.repository.model.RawPhotoEntity
 import dog.snow.androidrecruittest.repository.service.PhotoService
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class PhotoRepo(
     /*private val db: AppDatabase,
@@ -31,7 +33,15 @@ class PhotoRepo(
     }
 
     suspend fun deletePhoto(photoDao: PhotoDao, photo: RawPhotoEntity){
-        photoDao.deletePhotos(photo)
+        try {
+            val delete = photoDao.deletePhotos(photo)
+            if (delete != 1){
+                throw Exception()
+            }
+        }catch (e: Exception){
+            println("Error delete DAO-> photo")
+        }
+
     }
 
     suspend fun getAlbumsId(photoDao: PhotoDao) : List<Int>{
@@ -52,12 +62,45 @@ class PhotoRepo(
     }
 
     suspend fun cachePhotos(photoService: PhotoService, photoDao: PhotoDao, limit: Int): Boolean {
-        val retrofitResponse = photoService.getPhotos(limit)
-        if (retrofitResponse.isSuccessful) {
-            retrofitResponse.body()?.let { data ->
-                photoDao.pushPhotos(mapPhotos(data))
+        try {
+            val retrofitResponse = photoService.getPhotos(limit)
+            if (retrofitResponse.isSuccessful) {
+                retrofitResponse.body()?.let { data ->
+                    try {
+                        val insert = photoDao.pushPhotos(mapPhotos(data))
+                        if (insert.isEmpty()){
+                            throw Exception()
+                        }
+                    }catch (e: Exception){
+                        println("Error DAO-> photo")
+                    }
+                }
+                return true
+            }else{
+                when(retrofitResponse.code()){
+                    in 400..499 -> {
+                        println("Error SERVICE: Client-> photo")
+                    }
+                    in 500..599 -> {
+                        println("Error SERVICE: Server-> photo")
+                    }
+                    else -> {
+                        println("Error SERVICE-> photo")
+                    }
+                }
             }
-            return true
+        }catch (e: Exception){
+            when (e){
+                is SocketTimeoutException ->{
+                    println("Error SERVICE: SocketTimeoutException-> photo")
+                }
+                is UnknownHostException -> {
+                    println("Error SERVICE: UnknownHostException-> photo")
+                }
+                else -> {
+                    println("Error SERVICE: Exception-> photo")
+                }
+            }
         }
         return false
     }

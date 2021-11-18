@@ -6,6 +6,9 @@ import dog.snow.androidrecruittest.repository.model.RawAlbum
 import dog.snow.androidrecruittest.repository.model.RawAlbumEntity
 import dog.snow.androidrecruittest.repository.service.AlbumService
 import retrofit2.Retrofit
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import kotlin.Exception
 
 
 class AlbumRepo (
@@ -31,7 +34,14 @@ class AlbumRepo (
     }
 
     suspend fun deleteAlbum(albumDao: AlbumDao, album: RawAlbumEntity){
-        albumDao.deleteAlbum(album)
+        try {
+            val delete = albumDao.deleteAlbum(album)
+            if (delete != 1){
+                throw Exception()
+            }
+        }catch (e: Exception){
+            println("Error delete DAO-> album")
+        }
     }
 
     fun mapAlbum (data: List<RawAlbum>) : List<RawAlbumEntity>{
@@ -49,13 +59,47 @@ class AlbumRepo (
 
     suspend fun cacheAlbums(albumDao: AlbumDao, albumService: AlbumService, albumsIds: List<Int>) : Boolean{     //: Boolean
         albumsIds.forEach {id ->
-            val retrofitResponse = albumService.getAlbums(id)
-            if (retrofitResponse.isSuccessful) {
-                retrofitResponse.body()?.let { data ->
-                    val listAlbum = listOf<RawAlbumEntity>(mapAlbum(data))
-                    albumDao.pushAlbums(listAlbum)
+            try {
+                val retrofitResponse = albumService.getAlbums(id)
+                if (retrofitResponse.isSuccessful) {
+                    retrofitResponse.body()?.let { data ->
+                        val listAlbum = listOf<RawAlbumEntity>(mapAlbum(data))
+                        try {
+                            val insert = albumDao.pushAlbums(listAlbum)
+                            if (insert.isEmpty()){
+                                throw Exception()
+                            }
+                        }catch (e: Exception){
+                            println("Error DAO-> album id $id")
+                        }
+                    }
+                }else{
+                    when(retrofitResponse.code()){
+                        in 400..499 -> {
+                            println("Error SERVICE: Client-> album id $id")
+                        }
+                        in 500..599 -> {
+                            println("Error SERVICE: Server-> album id $id")
+                        }
+                        else -> {
+                            println("Error SERVICE-> album id $id")
+                        }
+                    }
+                }
+            }catch (e: Exception){
+                when (e){
+                    is SocketTimeoutException ->{
+                        println("Error SERVICE: SocketTimeoutException-> album id $id")
+                    }
+                    is UnknownHostException -> {
+                        println("Error SERVICE: UnknownHostException-> album id $id")
+                    }
+                    else -> {
+                        println("Error SERVICE: Exception-> album id $id")
+                    }
                 }
             }
+
             //return true
         }
         return true

@@ -9,6 +9,9 @@ import dog.snow.androidrecruittest.repository.model.RawUserEntity
 import dog.snow.androidrecruittest.repository.service.UserService
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import kotlin.Exception
 
 class UserRepo(
     /*private val db: AppDatabase,
@@ -33,7 +36,14 @@ class UserRepo(
     }
 
     suspend fun deleteUser(userDao: UserDao, user: RawUserEntity){
-        userDao.deleteUser(user)
+        try {
+            val delete = userDao.deleteUser(user)
+            if (delete != 1){
+                throw Exception()
+            }
+        }catch (e: Exception){
+            println("Error delete DAO-> user")
+        }
     }
 
     fun mapUsers (data: List<RawUser>) : List<RawUserEntity>{
@@ -51,15 +61,48 @@ class UserRepo(
 
     suspend fun cacheUsers(userDao: UserDao, userService: UserService, usersIds: List<Int>) : Boolean{     //
         usersIds.forEach {id ->
-            val retrofitResponse = userService.getUsers(id)
-            if (retrofitResponse.isSuccessful) {
-                retrofitResponse.body()?.let { data ->
-                    userDao.pushUsers(mapUsers(data))
+            try {
+                val retrofitResponse = userService.getUsers(id)
+                if (retrofitResponse.isSuccessful) {
+                    retrofitResponse.body()?.let { data ->
+                        try {
+                            val insert = userDao.pushUsers(mapUsers(data))
+                            if (insert < 0L){
+                                throw Exception()
+                            }
+                        }catch (e: Exception){
+                            println("Error DAO-> user id $id")
+                        }
+                    }
+                }else{
+                    when(retrofitResponse.code()){
+                        in 400..499 -> {
+                            println("Error SERVICE: Client-> user id $id")
+                        }
+                        in 500..599 -> {
+                            println("Error SERVICE: Server-> user id $id")
+                        }
+                        else -> {
+                            println("Error SERVICE-> user id $id")
+                        }
+                    }
+                }
+            }catch (e: Exception){
+                when (e){
+                    is SocketTimeoutException ->{
+                        println("Error SERVICE: SocketTimeoutException-> user id $id")
+                    }
+                    is UnknownHostException -> {
+                        println("Error SERVICE: UnknownHostException-> user id $id")
+                    }
+                    else -> {
+                        println("Error SERVICE: Exception-> user id $id")
+                    }
                 }
             }
-            return true
         }
-        return false
+        //return false
+        return true
     }
 
 }

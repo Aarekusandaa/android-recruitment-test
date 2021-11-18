@@ -7,10 +7,10 @@ import dog.snow.androidrecruittest.repository.model.RawUserEntity
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushUsers(userList: List<RawUserEntity>)
+    suspend fun pushUsers(userList: List<RawUserEntity>) : List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushUsers(userList: RawUserEntity)
+    suspend fun pushUsers(userList: RawUserEntity) : Long
 
     @Query("SELECT * FROM User WHERE id = :id")
     suspend fun getUser(id: Int): RawUserEntity
@@ -19,5 +19,5 @@ interface UserDao {
     suspend fun getUsers(): List<RawUserEntity>
 
     @Delete
-    suspend fun deleteUser(user: RawUserEntity)
+    suspend fun deleteUser(user: RawUserEntity) : Int
 }

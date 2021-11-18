@@ -63,7 +63,8 @@ class DetailsFragment : Fragment(R.layout.details_fragment){
         var ids = -1
         //val bundle = Bundle()
         if (arguments != null){
-            ids  = arguments?.getInt("id")!!
+            ids  = arguments?.getInt("id")?: -1
+
         }
 
         val db = Room.databaseBuilder(

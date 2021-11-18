@@ -31,6 +31,14 @@ class NetworkTools {
                         }
                     }
 
+                    override fun onUnavailable() {
+                        GlobalScope.launch {
+                            withContext(Dispatchers.Main){
+                                networkState.value = Connection.NOT_CONNECTED
+                            }
+                        }
+                    }
+
                     override fun onLost(network: Network) {
                         GlobalScope.launch {
                             withContext(Dispatchers.Main){

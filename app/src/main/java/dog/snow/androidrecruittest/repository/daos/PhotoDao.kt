@@ -7,7 +7,7 @@ import dog.snow.androidrecruittest.repository.model.RawPhotoEntity
 interface PhotoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun pushPhotos(photosList: List<RawPhotoEntity>)
+    suspend fun pushPhotos(photosList: List<RawPhotoEntity>) : List<Long>
 
     @Query("SELECT id FROM Photo")
     suspend fun getPhotosId(): List<Int>
@@ -19,5 +19,5 @@ interface PhotoDao {
     suspend fun getAlbumsId() : List<Int>
 
     @Delete
-    suspend fun deletePhotos(photo: RawPhotoEntity)
+    suspend fun deletePhotos(photo: RawPhotoEntity) : Int
 }

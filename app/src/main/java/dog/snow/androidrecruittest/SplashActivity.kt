@@ -1,5 +1,6 @@
 package dog.snow.androidrecruittest
 
+import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -8,10 +9,12 @@ import dog.snow.androidrecruittest.ui.viewmodels.SplashViewModel
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.google.gson.Gson
+import dog.snow.androidrecruittest.repository.daos.*
 import dog.snow.androidrecruittest.repository.database.AppDatabase
 import dog.snow.androidrecruittest.repository.service.AlbumService
 import dog.snow.androidrecruittest.repository.service.PhotoService
@@ -28,6 +31,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
 
     private val viewModel: SplashViewModel by viewModels()
+    /*private lateinit var userDao: UserDao
+    private lateinit var albumDao: AlbumDao
+    private lateinit var photoDao: PhotoDao
+    private lateinit var listDao: ListDao
+    private lateinit var detailsDao: DetailsDao
+    private lateinit var albumService: AlbumService
+    private lateinit var photoService: PhotoService
+    private lateinit var userService: UserService*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,11 +63,26 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
         val photoService: PhotoService = retrofit.create(PhotoService::class.java)
         val userService: UserService = retrofit.create(UserService::class.java)
 
+        if (NetworkTools.isInternetAvailable(this)){
+            NetworkTools.networkState.value = Connection.CONNECTED
+        }else{
+            NetworkTools.networkState.value = Connection.NOT_CONNECTED
+        }
+
         NetworkTools.registerNetworkCallbacks(this)
         NetworkTools.networkState.observe(this, Observer { isConnected ->
             if (isConnected == Connection.CONNECTED){
-                viewModel.cacheData(photoService, photoDao, 100, albumDao, albumService,
-                    userDao, userService, listDao, detailsDao)
+
+        /*val network = MutableLiveData<Boolean>(NetworkTools.isInternetAvailable(this))
+        network.observe(this, { state ->
+            if (state){*/
+                viewModel.cacheData(this, photoService, photoDao,
+                    100, albumDao, albumService, userDao, userService, listDao, detailsDao)
+            /*}else{
+                showError("internet disconnection")
+            }
+        })*/
+
 
 
 
@@ -97,11 +123,24 @@ class SplashActivity : AppCompatActivity(R.layout.splash_activity) {
         })
     }
 
+    /*private fun again(context: Context, photoService: PhotoService, photoDao: PhotoDao, limit: Int, albumDao: AlbumDao, albumService: AlbumService,
+                      userDao: UserDao, userService: UserService, listDao: ListDao, detailsDao: DetailsDao){
+        if (!viewModel.cacheData(this, photoService, photoDao, 100, albumDao, albumService,
+                userDao, userService, listDao, detailsDao)){
+            showError("internet disconnection")
+        }
+    }*/
+
     private fun showError(errorMessage: String?) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.cant_download_dialog_title)
             .setMessage(getString(R.string.cant_download_dialog_message, errorMessage))
-            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> NetworkTools.registerNetworkCallbacks(this) }
+            .setPositiveButton(R.string.cant_download_dialog_btn_positive) { _, _ -> if (NetworkTools.isInternetAvailable(this)){
+                NetworkTools.networkState.value = Connection.CONNECTED
+            }else{
+                NetworkTools.networkState.value = Connection.NOT_CONNECTED
+            }}//again(this, photoService, photoDao,
+       // 100, albumDao, albumService, userDao, userService, listDao, detailsDao)
             .setNegativeButton(R.string.cant_download_dialog_btn_negative) { _, _ -> finish() }
             .create()
             .apply { setCanceledOnTouchOutside(false) }
